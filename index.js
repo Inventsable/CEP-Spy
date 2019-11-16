@@ -128,9 +128,8 @@ export default {
     const match = xml.data.match(verID);
     return match && match.length ? match[0].replace(/\w*\=\"/, "") : "unknown";
   },
-  launchLocalHost(url = null) {
-    if (this.localhost) this.launchInNewTab(this.localhost || null);
-    else console.log(`Panel has no .debug file`);
+  launchLocalhost(url = null) {
+    this.launchInNewTab(url || this.localhost);
   },
   launchInNewTab(url) {
     if (url) cep.util.openURLInDefaultBrowser(url);
