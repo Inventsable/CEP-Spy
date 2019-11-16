@@ -1,8 +1,55 @@
 export default {
-  rootPath: decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
-    /file\:\/{1,}/,
-    ""
+  path: {
+    root: decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
+      /file\:\/{1,}/,
+      ""
+    ),
+    userData: decodeURI(window.__adobe_cep__.getSystemPath("userData")).replace(
+      /file\:\/{1,}/,
+      ""
+    ),
+    commonFiles: decodeURI(
+      window.__adobe_cep__.getSystemPath("commonFiles")
+    ).replace(/file\:\/{1,}/, ""),
+    myDocuments: decodeURI(
+      window.__adobe_cep__.getSystemPath("myDocuments")
+    ).replace(/file\:\/{1,}/, ""),
+    hostApplication: decodeURI(
+      window.__adobe_cep__.getSystemPath("hostApplication")
+    ).replace(/file\:\/{1,}/, "")
+  },
+  package: JSON.parse(
+    window.cep.fs.readFile(
+      `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
+        /file\:\/{1,}/,
+        ""
+      )}/package.json`
+    ).data
   ),
+  author: JSON.parse(
+    window.cep.fs.readFile(
+      `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
+        /file\:\/{1,}/,
+        ""
+      )}/package.json`
+    ).data
+  ).author,
+  repository: JSON.parse(
+    window.cep.fs.readFile(
+      `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
+        /file\:\/{1,}/,
+        ""
+      )}/package.json`
+    ).data
+  ).repository,
+  homepage: JSON.parse(
+    window.cep.fs.readFile(
+      `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
+        /file\:\/{1,}/,
+        ""
+      )}/package.json`
+    ).data
+  ).homepage,
   localhost: `http://localhost:${
     window.cep.fs
       .readFile(
@@ -82,6 +129,19 @@ export default {
     return match && match.length ? match[0].replace(/\w*\=\"/, "") : "unknown";
   },
   launchLocalHost(url = null) {
-    cep.util.openURLInDefaultBrowser(url || this.localhost);
+    if (this.localhost) this.launchInNewTab(this.localhost || null);
+    else console.log(`Panel has no .debug file`);
+  },
+  launchInNewTab(url) {
+    if (url) cep.util.openURLInDefaultBrowser(url);
+  },
+  launchHomepage() {
+    if (this.homepage) this.launchInNewTab(this.homepage || null);
+    else console.log(`Panel has no homepage defined in package.json`);
+  },
+  launchGitRepo() {
+    if (this.repository)
+      this.launchInNewTab(`https://github.com/${this.repository}`);
+    else console.log(`Panel has no repo defined in package.json.`);
   }
 };

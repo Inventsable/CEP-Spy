@@ -50,7 +50,7 @@ console.log(spy.localhost); // Returns `http://localhost:####`
 ```js
 const spy = require("cep-spy").default;
 
-console.log(spy.rootPath); // Returns 'C:/Users/.../[your-panel-root]'
+console.log(spy.path.root); // Returns 'C:/Users/.../[your-panel-root]'
 console.log(spy.extVersion); // Returns '1.0.0', as defined in manifest.xml
 console.log(spy.isDev); // Returns BOOL true if bombino and while hot reloading
 console.log(spy.appName); // Returns 'ILST' or current <HostList> param of host app
@@ -75,8 +75,14 @@ console.log(siblings);
 
 ### Static values
 
-- `rootPath` [STRING]: The absolute path (pre-treated) of the current extension
+- `path.root` [STRING]: The absolute path (pre-treated) of the current extension
+- `path.userData` [STRING]: The absolute path (pre-treated) to CS's `userData`
+- `path.commonFiles` [STRING]: The absolute path (pre-treated) to CS's `commonFiles`
+- `path.myDocuments` [STRING]: The absolute path (pre-treated) to CS's `myDocuments`
+- `path.hostApplication` [STRING]: The absolute path (pre-treated) to the app's `hostApplication` executable
+- `package` [OBJECT]: The JSON-parsed contents of the panel's root `package.json` file
 - `extID` [STRING]: `id` of the current extension as seen in manifest.xml (eg `com.adobe.panel`)
+- `author` [STRING/OBJECT]: Returns the `author` parameter of `package.json`, either as a string or an Object with `name`, `email`, and `url` key-values.
 - `extName` [STRING]: Proper name as displayed in Menu of the current extension
 - `extVersion` [STRING]: The major, minor, micro versioning of the extension (eg `1.x.x`) in manifest.xml
 - `ext` [OBJECT]: Object containing CSInterface data for current extension (height, mainPath, width, windowType, etc.)
@@ -97,4 +103,6 @@ console.log(siblings);
 - `getExtData(id)`: Returns extension data object of matching `id`
 - `openExtension(ext)`: Requests a given extension launch by extension data object
 - `getVersion(ext)`: Returns a major/minor/micro from given extension data object
-- `launchLocalHost(url?)`: Launches any given localhost or the current extension's localhost if none
+- `launchLocalHost()`: Launches any given localhost or the current extension's localhost if none
+- `launchHomepage()`: Launches the homepage given in `package.json`'s `homepage` attribute
+- `launchGitRepo()`: Launches the GitHub repo link given in `package.json`'s `repository` attribute
