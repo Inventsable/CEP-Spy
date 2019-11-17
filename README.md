@@ -38,7 +38,7 @@ Some are simple wrappers around CSInterface's functions but returning more usefu
 ```js
 import spy from "cep-spy";
 
-spy.launchLocalHost(); // Launches in default browser
+spy.launchLocalhost(); // Launches in default browser
 
 console.log(spy.localhost); // Returns `http://localhost:####`
 ```
@@ -103,6 +103,6 @@ console.log(siblings);
 - `getExtData(id)`: Returns extension data object of matching `id`
 - `openExtension(ext)`: Requests a given extension launch by extension data object
 - `getVersion(ext)`: Returns a major/minor/micro from given extension data object
-- `launchLocalHost()`: Launches any given localhost or the current extension's localhost if none
+- `launchLocalhost()`: Launches any given localhost or the current extension's localhost if none
 - `launchHomepage()`: Launches the homepage given in `package.json`'s `homepage` attribute
 - `launchGitRepo()`: Launches the GitHub repo link given in `package.json`'s `repository` attribute
