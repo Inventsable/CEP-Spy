@@ -1,3 +1,34 @@
+/**
+ * @param {String} string - The string to sanitize as Mac equivalent
+ * @returns {String} - A correctly formatted path regardless of OS
+ */
+function getRealString(string) {
+  return navigator.platform.indexOf("Mac") > -1
+    ? `/${string}`.replace(/\s/g, "\\ ")
+    : string;
+}
+
+/**
+ * @param {Object} parent - The containing object to recurse through
+ */
+function recheckPathData(parent) {
+  function fixPath(string) {
+    return navigator.platform.indexOf("Mac") > -1
+      ? `/${string}`.replace(/\s/g, "\\ ")
+      : string;
+  }
+  Object.keys(parent).forEach((key) => {
+    if (/object/i.test(typeof parent[key]))
+      parent[key] = recheckPathData(parent[key]);
+    else if (
+      /string/i.test(typeof parent[key]) &&
+      /(\\|\/)\w{1,}(\\|\/)/.test(parent[key])
+    )
+      parent[key] = fixPath(parent[key]);
+  });
+  return parent;
+}
+
 const fakeSpy = {
   path: {
     root: "C:/Users/TRSch/AppData/Roaming/Adobe/CEP/extensions/panelify-demo",
@@ -173,63 +204,86 @@ const fakeSpy = {
 
 const spy = {
   path: {
-    root: decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
-      /file\:\/{1,}/,
-      ""
+    root: getRealString(
+      decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
+        /file\:\/{1,}/,
+        ""
+      )
     ),
-    userData: decodeURI(window.__adobe_cep__.getSystemPath("userData")).replace(
-      /file\:\/{1,}/,
-      ""
+    userData: getRealString(
+      decodeURI(window.__adobe_cep__.getSystemPath("userData")).replace(
+        /file\:\/{1,}/,
+        ""
+      )
     ),
-    commonFiles: decodeURI(
-      window.__adobe_cep__.getSystemPath("commonFiles")
-    ).replace(/file\:\/{1,}/, ""),
-    myDocuments: decodeURI(
-      window.__adobe_cep__.getSystemPath("myDocuments")
-    ).replace(/file\:\/{1,}/, ""),
-    hostApplication: decodeURI(
-      window.__adobe_cep__.getSystemPath("hostApplication")
-    ).replace(/file\:\/{1,}/, ""),
+    commonFiles: getRealString(
+      decodeURI(window.__adobe_cep__.getSystemPath("commonFiles")).replace(
+        /file\:\/{1,}/,
+        ""
+      )
+    ),
+    myDocuments: getRealString(
+      decodeURI(window.__adobe_cep__.getSystemPath("myDocuments")).replace(
+        /file\:\/{1,}/,
+        ""
+      )
+    ),
+    hostApplication: getRealString(
+      decodeURI(window.__adobe_cep__.getSystemPath("hostApplication")).replace(
+        /file\:\/{1,}/,
+        ""
+      )
+    ),
   },
   package: JSON.parse(
     window.cep.fs.readFile(
-      `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
-        /file\:\/{1,}/,
-        ""
-      )}/package.json`
+      getRealString(
+        `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
+          /file\:\/{1,}/,
+          ""
+        )}/package.json`
+      )
     ).data
   ),
   author: JSON.parse(
     window.cep.fs.readFile(
-      `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
-        /file\:\/{1,}/,
-        ""
-      )}/package.json`
+      getRealString(
+        `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
+          /file\:\/{1,}/,
+          ""
+        )}/package.json`
+      )
     ).data
   ).author,
   repository: JSON.parse(
     window.cep.fs.readFile(
-      `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
-        /file\:\/{1,}/,
-        ""
-      )}/package.json`
+      getRealString(
+        `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
+          /file\:\/{1,}/,
+          ""
+        )}/package.json`
+      )
     ).data
   ).repository,
   homepage: JSON.parse(
     window.cep.fs.readFile(
-      `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
-        /file\:\/{1,}/,
-        ""
-      )}/package.json`
+      getRealString(
+        `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
+          /file\:\/{1,}/,
+          ""
+        )}/package.json`
+      )
     ).data
   ).homepage,
   localhost: `http://localhost:${
     window.cep.fs
       .readFile(
-        `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
-          /file\:\/{1,}/,
-          ""
-        )}/.debug`
+        getRealString(
+          `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
+            /file\:\/{1,}/,
+            ""
+          )}/.debug`
+        )
       )
       .data.match(
         new RegExp(
@@ -242,10 +296,12 @@ const spy = {
   isDev: /localhost/.test(document.location.href),
   extVersion: window.cep.fs
     .readFile(
-      `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
-        /file\:\/{1,}/,
-        ""
-      )}/CSXS/manifest.xml`
+      getRealString(
+        `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
+          /file\:\/{1,}/,
+          ""
+        )}/CSXS/manifest.xml`
+      )
     )
     .data.match(/ExtensionBundleVersion\=\"(\d|\.)*(?=\")/)[0]
     .replace(/\w*\=\"/, ""),
@@ -318,24 +374,5 @@ const spy = {
   },
 };
 
-let realSpy = recheckPathData(window.__adobe_cep__ ? spy : fakeSpy);
-
-function recheckPathData(parent) {
-  function fixPath(string) {
-    return navigator.platform.indexOf("Mac") > -1
-      ? `/${string}`.replace(/\s/g, "\\ ")
-      : string;
-  }
-  Object.keys(parent).forEach((key) => {
-    if (/object/i.test(typeof parent[key]))
-      parent[key] = recheckPathData(parent[key]);
-    else if (
-      /string/i.test(typeof parent[key]) &&
-      /(\\|\/)\w{1,}(\\|\/)/.test(parent[key])
-    )
-      parent[key] = fixPath(parent[key]);
-  });
-  return parent;
-}
-
+const spy = window.__adobe_cep__ ? spy : fakeSpy;
 export default realSpy;
