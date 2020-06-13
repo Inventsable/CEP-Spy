@@ -374,5 +374,5 @@ const spy = {
   },
 };
 
-const spy = window.__adobe_cep__ ? spy : fakeSpy;
+const realSpy = window.__adobe_cep__ ? spy : fakeSpy;
 export default realSpy;
