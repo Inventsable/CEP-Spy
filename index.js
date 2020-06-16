@@ -53,13 +53,15 @@ function tryReadingFile(root, file, key = "", asJSON = false) {
 function getLocalHost() {
   let data = tryReadingFile("", "/.debug");
   if (!data) return "http://localhost:8081";
-  return data.match(
-    new RegExp(
-      `\\<Host\\sName\\=\\"${
-        JSON.parse(window.__adobe_cep__.getHostEnvironment()).appName
-      }\\"\\sPort\\=\\"(\\d*)`
-    )
-  )[1];
+  return `http://localhost:${
+    data.match(
+      new RegExp(
+        `\\<Host\\sName\\=\\"${
+          JSON.parse(window.__adobe_cep__.getHostEnvironment()).appName
+        }\\"\\sPort\\=\\"(\\d*)`
+      )
+    )[1]
+  }`;
 }
 
 /**
