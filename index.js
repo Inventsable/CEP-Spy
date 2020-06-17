@@ -96,8 +96,8 @@ function doubleCheckPathIntegrity(spy) {
   if (fs.existsSync(target)) {
     return spy;
   } else if (fs.existsSync(target.replace(/%20/g, " "))) {
-    Object.keys(spy.paths).forEach((item) => {
-      spy.paths[item] = spy.paths[item].replace(/%20/g, " ");
+    Object.keys(spy.path).forEach((item) => {
+      spy.path[item] = spy.paths[item].replace(/%20/g, " ");
     });
   } else {
     console.error("Double check failed.");
@@ -107,7 +107,7 @@ function doubleCheckPathIntegrity(spy) {
 }
 
 // If this is browser, return a fake object with static values. Otherwise, be dynamic per host app
-const spy = !window.__adobe_cep__
+let spy = !window.__adobe_cep__
   ? {
       path: {
         root:
