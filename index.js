@@ -41,8 +41,17 @@ function tryReadingFile(root, file, key = "", asJSON = false) {
           : ""
         : JSON.parse(data)
       : data;
+  } else if (fs.existsSync(target.replace(/%20/g, " "))) {
+    let data = fs.readFileSync(target.replace(/%20/g, " "), "utf-8");
+    return asJSON
+      ? key || key.length
+        ? JSON.parse(data)[key]
+          ? JSON.parse(data)[key]
+          : ""
+        : JSON.parse(data)
+      : data;
   } else {
-    console.log("Target not found:", file, target);
+    console.error("Target not found:", file, target);
     return null;
   }
 }
