@@ -97,7 +97,7 @@ function doubleCheckPathIntegrity(spy) {
     return spy;
   } else if (fs.existsSync(target.replace(/%20/g, " "))) {
     Object.keys(spy.path).forEach((item) => {
-      spy.path[item] = spy.paths[item].replace(/%20/g, " ");
+      spy.path[item] = spy.path[item].replace(/%20/g, " ");
     });
   } else {
     console.error("Double check failed.");
