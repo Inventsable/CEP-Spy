@@ -400,7 +400,7 @@ const spy = !window.__adobe_cep__
       },
     };
 
-doubleCheckPathIntegrity(spy);
+spy = doubleCheckPathIntegrity(spy);
 export default spy;
 //
 //
