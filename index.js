@@ -91,14 +91,11 @@ function getManifestVersion() {
 function doubleCheckPathIntegrity(spy) {
   if (!window.__adobe_cep__) return spy;
 
-  let root =
-    root && root.length
-      ? root
-      : resolveString(window.__adobe_cep__.getSystemPath("extension"));
+  let root = resolveString(window.__adobe_cep__.getSystemPath("extension"));
   let target = resolveString(`${root}/package.json`);
-  if (fs.existsSync(root)) {
+  if (fs.existsSync(target)) {
     return spy;
-  } else if (fs.existsSync(root.replace(/%20/g, " "))) {
+  } else if (fs.existsSync(target.replace(/%20/g, " "))) {
     Object.keys(spy.paths).forEach((item) => {
       spy.paths[item] = spy.paths[item].replace(/%20/g, " ");
     });
