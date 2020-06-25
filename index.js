@@ -104,7 +104,8 @@ function doubleCheckPathIntegrity(spy) {
 
   let root = resolveString(window.__adobe_cep__.getSystemPath("extension"));
   let target = resolveString(`${root}/package.json`);
-  if (fs.existsSync(target)) {
+  if (fs.existsSync(target) || fs.readFileSync(decodeURI(target), "utf-8")) {
+    console.log("Target was found.");
     return spy;
   } else if (fs.existsSync(target.replace(/%20/g, " "))) {
     Object.keys(spy.path).forEach((item) => {
@@ -408,7 +409,7 @@ let spy = !window.__adobe_cep__
       },
     };
 
-spy = doubleCheckPathIntegrity(spy);
+if (navigator.platform.indexOf("Mac")) spy = doubleCheckPathIntegrity(spy);
 export default spy;
 //
 //
