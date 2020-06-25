@@ -7,14 +7,15 @@ const fs = window.__adobe_cep__ ? require("fs") : null;
  * @param {Boolean} asJSON - If data should return as parsed JSON
  */
 function resolveString(str, asJSON = false) {
-  let result = path
-    .resolve(
-      str.replace(
-        /file\:\/{1,}/,
-        navigator.platform.indexOf("Mac") > -1 ? "/" : ""
-      )
+  let result;
+  result = path.resolve(
+    str.replace(
+      /file\:\/{1,}/,
+      navigator.platform.indexOf("Mac") > -1 ? "/" : ""
     )
-    .replace(/\\{1}/gm, "/");
+  );
+  if (navigator.platform.indexOf("Mac"))
+    result = result.replace(/\\{1}/gm, "/");
   return asJSON ? JSON.parse(result) : result;
 }
 
@@ -43,6 +44,16 @@ function tryReadingFile(root, file, key = "", asJSON = false) {
       : data;
   } else if (fs.existsSync(target.replace(/%20/g, " "))) {
     let data = fs.readFileSync(target.replace(/%20/g, " "), "utf-8");
+    return asJSON
+      ? key || key.length
+        ? JSON.parse(data)[key]
+          ? JSON.parse(data)[key]
+          : ""
+        : JSON.parse(data)
+      : data;
+  } else if (fs.existsSync(decodeURI(target))) {
+    console.log("DecodeURI does work");
+    let data = fs.readFileSync(decodeURI(target), "utf-8");
     return asJSON
       ? key || key.length
         ? JSON.parse(data)[key]
