@@ -19,6 +19,19 @@ function resolveString(str, asJSON = false) {
   return asJSON ? JSON.parse(result) : result;
 }
 
+function getRoot() {
+  let result = resolveString(window.__adobe_cep__.getSystemPath("extension"));
+  if (fs.existsSync(result)) return result;
+  else if (fs.existsSync(decodeURI(result))) return decodeURI(result);
+  else if (fs.existsSync(result.replace(/%20/gm, " ")))
+    return result.replace.replace(/%20/gm, " ");
+  else if (fs.existsSync(path.resolve(result))) return path.resolve(result);
+  else {
+    console.log("ROOT RESOLUTION FAILED:", result);
+    return result;
+  }
+}
+
 /**
  *
  * @param {String} root - Base extension path
@@ -28,10 +41,7 @@ function resolveString(str, asJSON = false) {
  */
 
 function tryReadingFile(root, file, key = "", asJSON = false) {
-  root =
-    root && root.length
-      ? root
-      : resolveString(window.__adobe_cep__.getSystemPath("extension"));
+  root = root && root.length ? root : getRoot();
   let target = resolveString(`${root}/${file}`);
   if (fs.existsSync(target)) {
     let data = fs.readFileSync(target, "utf-8");
@@ -107,8 +117,13 @@ function doubleCheckPathIntegrity(spy) {
   if (fs.existsSync(target) || fs.readFileSync(decodeURI(target), "utf-8")) {
     if (navigator.platform.indexOf("Mac") < 1) {
       Object.keys(spy.path).forEach((item) => {
-        if (fs.existsSync(spy.path[item].replace(/%20/g, " ")))
-          spy.path[item] = spy.path[item].replace(/%20/g, " ");
+        if (fs.existsSync(spy.path[item].replace(/\%20/gm, " ")))
+          spy.path[item] = spy.path[item].replace(/\%20/gm, " ");
+        else if (fs.existsSync(decodeURI(spy.path[item])))
+          spy.path[item] = decodeURI(spy.path[item]);
+        else {
+          console.log("NO MATCH:", item, spy.path[item]);
+        }
       });
     }
     return spy;
