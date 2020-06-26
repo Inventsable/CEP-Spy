@@ -1,6 +1,6 @@
 {
   "name": "cep-spy",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "No-dependency CEP utility for identifying current host app, current panel, sibling extensions and more",
   "main": "index.js",
   "scripts": {

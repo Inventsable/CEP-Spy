@@ -42,8 +42,8 @@ function tryReadingFile(root, file, key = "", asJSON = false) {
           : ""
         : JSON.parse(data)
       : data;
-  } else if (fs.existsSync(target.replace(/%20/g, " "))) {
-    let data = fs.readFileSync(target.replace(/%20/g, " "), "utf-8");
+  } else if (fs.existsSync(target.replace(/%20/gm, " "))) {
+    let data = fs.readFileSync(target.replace(/%20/gm, " "), "utf-8");
     return asJSON
       ? key || key.length
         ? JSON.parse(data)[key]
@@ -106,6 +106,10 @@ function doubleCheckPathIntegrity(spy) {
   let target = resolveString(`${root}/package.json`);
   if (fs.existsSync(target) || fs.readFileSync(decodeURI(target), "utf-8")) {
     console.log("Target was found.");
+    if (!navigator.indexOf("Mac"))
+      Object.keys(spy.path).forEach((item) => {
+        spy.path[item] = spy.path[item].replace(/%20/g, " ");
+      });
     return spy;
   } else if (fs.existsSync(target.replace(/%20/g, " "))) {
     Object.keys(spy.path).forEach((item) => {
@@ -409,7 +413,7 @@ let spy = !window.__adobe_cep__
       },
     };
 
-if (navigator.platform.indexOf("Mac")) spy = doubleCheckPathIntegrity(spy);
+spy = doubleCheckPathIntegrity(spy);
 export default spy;
 //
 //
