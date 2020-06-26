@@ -117,7 +117,8 @@ function doubleCheckPathIntegrity(spy) {
   if (fs.existsSync(target) || fs.readFileSync(decodeURI(target), "utf-8")) {
     if (navigator.platform.indexOf("Mac") < 1) {
       Object.keys(spy.path).forEach((item) => {
-        if (fs.existsSync(spy.path[item].replace(/\%20/gm, " ")))
+        if (item == "root") spy.path[item] = getRoot();
+        else if (fs.existsSync(spy.path[item].replace(/\%20/gm, " ")))
           spy.path[item] = spy.path[item].replace(/\%20/gm, " ");
         else if (fs.existsSync(decodeURI(spy.path[item])))
           spy.path[item] = decodeURI(spy.path[item]);
