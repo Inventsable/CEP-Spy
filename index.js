@@ -106,7 +106,7 @@ function doubleCheckPathIntegrity(spy) {
   let target = resolveString(`${root}/package.json`);
   if (fs.existsSync(target) || fs.readFileSync(decodeURI(target), "utf-8")) {
     console.log("Target was found.");
-    if (!navigator.indexOf("Mac"))
+    if (!navigator.platform.indexOf("Mac"))
       Object.keys(spy.path).forEach((item) => {
         spy.path[item] = spy.path[item].replace(/%20/g, " ");
       });
