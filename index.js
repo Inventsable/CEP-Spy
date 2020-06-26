@@ -14,7 +14,7 @@ function resolveString(str, asJSON = false) {
       navigator.platform.indexOf("Mac") > -1 ? "/" : ""
     )
   );
-  if (navigator.platform.indexOf("Mac"))
+  if (navigator.platform.indexOf("Mac") > -1)
     result = result.replace(/\\{1}/gm, "/");
   return asJSON ? JSON.parse(result) : result;
 }
@@ -105,11 +105,12 @@ function doubleCheckPathIntegrity(spy) {
   let root = resolveString(window.__adobe_cep__.getSystemPath("extension"));
   let target = resolveString(`${root}/package.json`);
   if (fs.existsSync(target) || fs.readFileSync(decodeURI(target), "utf-8")) {
-    console.log("Target was found.");
-    if (!navigator.platform.indexOf("Mac"))
+    if (navigator.platform.indexOf("Mac") < 1) {
       Object.keys(spy.path).forEach((item) => {
-        spy.path[item] = spy.path[item].replace(/%20/g, " ");
+        if (fs.existsSync(spy.path[item].replace(/%20/g, " ")))
+          spy.path[item] = spy.path[item].replace(/%20/g, " ");
       });
+    }
     return spy;
   } else if (fs.existsSync(target.replace(/%20/g, " "))) {
     Object.keys(spy.path).forEach((item) => {
